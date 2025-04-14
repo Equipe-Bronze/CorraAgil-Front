@@ -1,4 +1,4 @@
-import { Image, StatusBar, Text, View, Alert } from "react-native"
+import { Image, StatusBar, Text, View, Alert, Linking, Platform } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import styles from "./style"
 import { Button } from "../../src/components/Button"
@@ -22,8 +22,6 @@ export default function Running() {
   const [userCalories, setUserCalories] = useState(0);
   const [previousLocation, setPreviousLocation] = useState<Location.LocationObject | null>(null);
   const [calories, setCalories] = useState(0);
-  const userWeight = 70; // Peso do usuário (pode ser dinâmico)
-  const MET = 9.8; // Corrida a 10km/h
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const mapRef = useRef<MapView>(null);
@@ -63,9 +61,10 @@ export default function Running() {
         (response) => {
           if (!paused && previousLocation) {
             const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, response.coords);
+            const updatedDistance = distance + newDistance;
 
-            setDistance((prev) => prev + newDistance);
-            // updateCalories(distance + newDistance);
+            setDistance(updatedDistance);
+            updateCalories(updatedDistance);
           }
 
           setPreviousLocation(response);
@@ -76,35 +75,28 @@ export default function Running() {
     })();
 
     return () => {
-      if (subscription) {
-        subscription.remove();
-      }
+      subscription?.remove();
     };
-  }, [previousLocation, paused]);
-
+  }, []);
 
   // Atualiza o cálculo das calorias gastas com base no tempo
-  const updateCalories = (newDistance: number) => {
-    if (newDistance > distance) {
-      const elapsedTime = (hours * 60) + minutes + (seconds / 60); // Tempo total em minutos
-      const MET = 9.8; // Valor de MET para corrida (ajuste conforme necessário)
-      const userWeight = 70; // Peso do usuário em kg (pode ser dinâmico)
-
-      const newCalories = userWeight * MET * (elapsedTime / 60);
-      setCalories(parseFloat(newCalories.toFixed(2)));
-    }
+  const updateCalories = (incrementalDistance: number) => {
+    const speedKmH = (incrementalDistance * 3600) / 1; // pois location atualiza a cada 1 segundo
+    const MET = speedKmH < 8 ? 7.0 : 9.8; // ajusta MET dependendo da velocidade
+    const userWeight = 70; // pode ser passado como prop ou vindo de contexto/asyncStorage
+    const caloriesPerSecond = (MET * userWeight * 3.5) / 200 / 60;
+    
+    setCalories(prev => parseFloat((prev + caloriesPerSecond).toFixed(2)));
   };
 
-  useEffect(() => {
-    if (location && previousLocation) {
-      const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, location.coords);
-      setDistance((prev) => prev + newDistance);
-      updateCalories(distance + newDistance);
-    }
-    setPreviousLocation(location);
-  }, [location]);
-
-
+  const getPace = () => {
+    if (distance === 0) return "00:00";
+    const totalMinutes = (hours * 60) + minutes + (seconds / 60);
+    const pace = totalMinutes / distance;
+    const paceMin = Math.floor(pace);
+    const paceSec = Math.round((pace - paceMin) * 60);
+    return `${paceMin.toString().padStart(2, '0')}:${paceSec.toString().padStart(2, '0')}`;
+  };
 
   // Função para solicitar permissão de localização
   async function requestLocationPermissions() {
@@ -112,7 +104,21 @@ export default function Running() {
 
     if (status !== "granted") {
 
-      Alert.alert("Permissão negada", "É necessário permitir o acesso à localização.");
+      Alert.alert("Permissão negada", "Para utilizar o aplicativo, é necessário permitir o acesso à localização. Você pode ativar isso nas configurações do seu dispositivo.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Abrir configurações",
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                Linking.openSettings();
+              }
+            }
+          }
+        ]
+      );
       return;
     }
 
@@ -194,11 +200,11 @@ export default function Running() {
             const totalTime = getTotalTimeInSeconds();
             const formattedTime = formatTime(totalTime);
 
-            setUserTimer(totalTime);
-            setUserDistance(distance);  
-            setUserCalories(calories);
-
-            sendRace();
+            sendRace({
+              time: totalTime,
+              distance: distance,
+              calories: calories
+            });
 
             setDistance(0);
             setCalories(0);
@@ -213,7 +219,7 @@ export default function Running() {
           }
         }
       ]
-    );  
+    );
   };
 
   const formatTime = (totalSeconds: number) => {
@@ -225,6 +231,7 @@ export default function Running() {
 
   const getTotalTimeInSeconds = () => {
     const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    console.log(totalSeconds);
     return totalSeconds;
   };
 
@@ -390,12 +397,21 @@ export default function Running() {
     }
   ]
 
-  const sendRace = async () => {
+  const sendRace = async ({
+    time,
+    distance,
+    calories
+  }: {
+    time: number;
+    distance: number;
+    calories: number;
+
+  }) => {
 
     try {
       setLoading(true);
 
-      const endPoint = "";
+      const endPoint = "https://corraagil.onrender.com/corrida";
 
       const response = await fetch(endPoint, {
         method: "POST",
@@ -404,15 +420,14 @@ export default function Running() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          time: userTimer,
-          distance: userDistance,
-          calories: userCalories,
+          time,
+          distance,
+          calories,
           // user: idUser
         })
       });
 
       const responseText = await response.text()
-      console.log(responseText)
 
       const contentType = response.headers.get("Content-Type");
 
@@ -440,13 +455,11 @@ export default function Running() {
         }
       }
 
-      Alert.alert("Sucesso", "Corrida salva com sucesso!");
-
-
     } catch (err) {
-
+        console.error(err);
     } finally {
-      setLoading(false);
+        // Alert.alert("Sucesso", "Corrida salva com sucesso!");
+        setLoading(false);
     }
   };
 
@@ -478,7 +491,7 @@ export default function Running() {
           </View>
 
           <View style={styles.steps}>
-            <Text style={styles.stepsDistance}>00:00</Text>
+            <Text style={styles.stepsDistance}>{getPace()}</Text>
             <Text style={{ color: "#FFA500" }}>Passos (min/km)</Text>
           </View>
 
@@ -524,7 +537,8 @@ export default function Running() {
                   title="Finalizar"
                   variant="primary"
                   onPress={confirmFinishRun}
-                  style={styles.buttonRun} />
+                  style={styles.buttonRun}
+                  loading={loading} />
 
                 <Button
                   title="Pausar"
