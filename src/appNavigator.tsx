@@ -10,6 +10,7 @@ import TokenPassword from "../app/tokenPassword/tokenPassword";
 import ResetPassword from "../app/resetPassword/resetPassword";
 import ChangedPassword from "../app/changedPassword/changedPassword";
 import Running from "../app/running/running";
+import CountDown from "../app/countDown/countDown";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ export default function AppNavigator() {
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: "Reset de Senha" }}/>
         <Stack.Screen name="ChangedPassword" component={ChangedPassword} options={{ title: "Senha Alterada" }}/>
         <Stack.Screen name="Running" component={Running} options={{ title: "Correr" }}/>
+        <Stack.Screen name="CountDown" component={CountDown} options={{ title: "Contagem Regressiva" }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

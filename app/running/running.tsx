@@ -6,10 +6,11 @@ import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
-import { router } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 
 export default function Running() {
+  const router = useRouter();
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [hours, setHours] = useState(0);
@@ -22,6 +23,7 @@ export default function Running() {
   const [userCalories, setUserCalories] = useState(0);
   const [previousLocation, setPreviousLocation] = useState<Location.LocationObject | null>(null);
   const [calories, setCalories] = useState(0);
+  const { startNow } = useLocalSearchParams();
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const mapRef = useRef<MapView>(null);
@@ -78,6 +80,12 @@ export default function Running() {
       subscription?.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (startNow === 'true') {
+      startTimer(); // chama sua função para iniciar corrida
+    }
+  }, [startNow]);
 
   // Atualiza o cálculo das calorias gastas com base no tempo
   const updateCalories = (incrementalDistance: number) => {
@@ -527,7 +535,7 @@ export default function Running() {
               <Button
                 title="CORRER"
                 variant="primary"
-                onPress={startTimer}
+                onPress={() => router.push('../countDown/countDown')}
                 IconCenter={AntDesign}
                 IconCenterName="caretright"
               />
