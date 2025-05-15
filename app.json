@@ -3,7 +3,7 @@
     "owner": "wesley_marques",
     "name": "CorraAgil",
     "slug": "corraagil",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "androidStatusBar": {
       "backgroundColor": "#12263A",
@@ -43,7 +43,12 @@
       "favicon": "./src/assets/icon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-location",
+      {
+        "locationAlwaysAndWhenInUsePermission": "Este app usa sua localização para registrar corridas.",
+        "locationWhenInUsePermission": "Este app usa sua localização para registrar corridas."
+      }
     ],
     "extra": {
       "eas": {

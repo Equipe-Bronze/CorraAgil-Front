@@ -108,9 +108,9 @@ export default function Running() {
 
   // Função para solicitar permissão de localização
   async function requestLocationPermissions() {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    const { granted, canAskAgain } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== "granted") {
+    if ( !granted) {
 
       Alert.alert("Permissão negada", "Para utilizar o aplicativo, é necessário permitir o acesso à localização. Você pode ativar isso nas configurações do seu dispositivo.",
         [
