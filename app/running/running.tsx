@@ -535,7 +535,8 @@ export default function Running() {
               <Button
                 title="CORRER"
                 variant="primary"
-                onPress={() => router.push('../countDown/countDown')}
+                // onPress={() => paused ? router.push('../countDown/countDown') : setPaused(false)}
+                onPress={startTimer}
                 IconCenter={AntDesign}
                 IconCenterName="caretright"
               />

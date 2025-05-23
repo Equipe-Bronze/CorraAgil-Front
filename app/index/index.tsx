@@ -8,7 +8,7 @@ import styles from "./styles";
 export default function Index() {
   return (
     <>
-      <StatusBar backgroundColor="#12263A" style="light" />
+      <StatusBar style="light" />
       <View style={styles.container}>
         <View style={styles.boxTop}>
           <View style={styles.background}>
