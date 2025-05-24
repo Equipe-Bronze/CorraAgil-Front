@@ -1,14 +1,20 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
+import { View, Text, Image, StatusBar } from "react-native";
+import * as SystemUI from 'expo-system-ui';
 import { Button } from "../../src/components/Button";
 import { router } from "expo-router";
 import styles from "./styles";
 
 export default function Index() {
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync('#12263A');
+  }, []);
+
+
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar backgroundColor="#12263A" barStyle="light-content" />
+
       <View style={styles.container}>
         <View style={styles.boxTop}>
           <View style={styles.background}>

@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     buttonMenu: {
         width: 335,
         height: 66,
-        marginTop: 14,
+        marginTop: 10,
         flexDirection: "row",
         justifyContent: "space-between",
         paddingLeft: 10,

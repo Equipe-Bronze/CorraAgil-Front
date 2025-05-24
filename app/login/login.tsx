@@ -107,7 +107,9 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      
+      <StatusBar backgroundColor="#12263A" barStyle="light-content" />
+      
       <View style={styles.top}>
         <Image source={require("../../src/assets/topLogin.png")} />
 
