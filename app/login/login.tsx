@@ -47,7 +47,6 @@ export default function Login() {
       });
 
       const responseText = await response.text()
-      console.log(responseText)
 
       const contentType = response.headers.get("Content-Type");
 

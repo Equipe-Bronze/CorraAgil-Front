@@ -3,19 +3,19 @@
     "owner": "wesley_marques",
     "name": "CorraAgil",
     "slug": "corraagil",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "androidStatusBar": {
       "backgroundColor": "#12263A",
       "barStyle": "light-content",
-      "translucent": false,
-      "updates": {
-        "enabled": true,
-        "fallbackToCacheTimeout": 0
-      },
-      "ota": {
-        "enabled": true
-      }
+      "translucent": false
+    },
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0
+    },
+    "ota": {
+      "enabled": true
     },
     "icon": "./src/assets/icon.png",
     "scheme": "CorraAgil",
@@ -31,13 +31,18 @@
       "buildNumber": "1.0.0"
     },
     "android": {
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ],
+      "package": "com.corraagil.corraagil",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icon.png",
-        "backgroundColor": "#12263A",
-        "package": "com.corraagil.corraagil",
-        "versionCode": 2
-      },
-      "package": "com.pipocaagil.corraagil"
+        "backgroundColor": "#12263A"
+      }
     },
     "web": {
       "favicon": "./src/assets/icon.png"

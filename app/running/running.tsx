@@ -1,12 +1,13 @@
 import { Image, StatusBar, Text, View, Alert, Linking, Platform } from "react-native"
 import { useEffect, useRef, useState } from "react";
-import styles from "./style"
-import { Button } from "../../src/components/Button"
-import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
-import { BlurView } from 'expo-blur';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
+import Toast from 'react-native-toast-message';
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { BlurView } from 'expo-blur';
+import styles from "./style"
+import { Button } from "../../src/components/Button"
 
 
 export default function Running() {
@@ -18,15 +19,19 @@ export default function Running() {
   const [paused, setPaused] = useState(true);
   const [distance, setDistance] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [userTimer, setUserTimer] = useState(0);
-  const [userDistance, setUserDistance] = useState(0);
-  const [userCalories, setUserCalories] = useState(0);
   const [previousLocation, setPreviousLocation] = useState<Location.LocationObject | null>(null);
   const [calories, setCalories] = useState(0);
   const { startNow } = useLocalSearchParams();
+  const [locationGranted, setLocationGranted] = useState(false);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const mapRef = useRef<MapView>(null);
+  const defaultRegion = {
+    latitude: -23.55052,
+    longitude: -46.633308,
+    latitudeDelta: 0.005,
+    longitudeDelta: 0.005,
+  };
 
 
   // Função para calcular a distância percorrida
@@ -51,6 +56,8 @@ export default function Running() {
 
   // Atualiza a localização do usuário em tempo real
   useEffect(() => {
+    if (!locationGranted) return;
+
     let subscription: Location.LocationSubscription | null = null;
 
     (async () => {
@@ -71,7 +78,12 @@ export default function Running() {
 
           setPreviousLocation(response);
           setLocation(response);
-          mapRef.current?.animateCamera({ center: response.coords });
+          mapRef.current?.animateCamera({
+            center: response.coords,
+            pitch: 0,
+            heading: 0,
+            zoom: 15
+          });
         }
       );
     })();
@@ -93,7 +105,7 @@ export default function Running() {
     const MET = speedKmH < 8 ? 7.0 : 9.8; // ajusta MET dependendo da velocidade
     const userWeight = 70; // pode ser passado como prop ou vindo de contexto/asyncStorage
     const caloriesPerSecond = (MET * userWeight * 3.5) / 200 / 60;
-    
+
     setCalories(prev => parseFloat((prev + caloriesPerSecond).toFixed(2)));
   };
 
@@ -108,9 +120,9 @@ export default function Running() {
 
   // Função para solicitar permissão de localização
   async function requestLocationPermissions() {
-    const { granted, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+    const { granted } = await Location.requestForegroundPermissionsAsync();
 
-    if ( !granted) {
+    if (!granted) {
 
       Alert.alert("Permissão negada", "Para utilizar o aplicativo, é necessário permitir o acesso à localização. Você pode ativar isso nas configurações do seu dispositivo.",
         [
@@ -130,6 +142,7 @@ export default function Running() {
       return;
     }
 
+    setLocationGranted(true);
     const currentPosition = await Location.getCurrentPositionAsync();
     setLocation(currentPosition);
   }
@@ -140,7 +153,12 @@ export default function Running() {
 
   useEffect(() => {
     if (location) {
-      mapRef.current?.animateCamera({ center: location.coords });
+      mapRef.current?.animateCamera({
+        center: location.coords,
+        pitch: 0,
+        heading: 0,
+        zoom: 15
+      });
     }
   }, [location]);
 
@@ -464,10 +482,10 @@ export default function Running() {
       }
 
     } catch (err) {
-        console.error(err);
+      console.error(err);
     } finally {
-        // Alert.alert("Sucesso", "Corrida salva com sucesso!");
-        setLoading(false);
+      // Alert.alert("Sucesso", "Corrida salva com sucesso!");
+      setLoading(false);
     }
   };
 
@@ -506,89 +524,91 @@ export default function Running() {
         </View>
       </View>
 
-      <View style={styles.boxBottom}>
+      <View style={[styles.container, { opacity: location ? 1 : 0 }]}>
+        <View style={styles.boxBottom}>
 
-        {
-          location &&
+          {
+            location &&
 
-          <MapView
-            ref={mapRef}
-            style={styles.backgroundMap}
-            initialRegion={
-              location
-                ? {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005
-                }
-                : undefined
-            }
-            showsUserLocation={true}
-            customMapStyle={darkMapStyle}
-          />
-        }
+            <MapView
+              ref={mapRef}
+              style={styles.backgroundMap}
+              initialRegion={
+                location
+                  ? {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                  }
+                  :
+                  defaultRegion}
+              showsUserLocation={true}
+              customMapStyle={darkMapStyle}
+            />
+          }
 
-        <View style={styles.transparentView}>
-          <View>
-            {paused ?
-              <Button
-                title="CORRER"
-                variant="primary"
-                // onPress={() => paused ? router.push('../countDown/countDown') : setPaused(false)}
-                onPress={startTimer}
-                IconCenter={AntDesign}
-                IconCenterName="caretright"
-              />
-              :
-              <View style={styles.boxButton}>
+          <View style={styles.transparentView}>
+            <View>
+              {paused ?
                 <Button
-                  title="Finalizar"
+                  title="CORRER"
                   variant="primary"
-                  onPress={confirmFinishRun}
-                  style={styles.buttonRun}
-                  loading={loading} />
+                  // onPress={() => paused ? router.push('../countDown/countDown') : setPaused(false)}
+                  onPress={startTimer}
+                  IconCenter={AntDesign}
+                  IconCenterName="caretright"
+                />
+                :
+                <View style={styles.boxButton}>
+                  <Button
+                    title="Finalizar"
+                    variant="primary"
+                    onPress={confirmFinishRun}
+                    style={styles.buttonRun}
+                    loading={loading} />
 
-                <Button
-                  title="Pausar"
-                  variant="primary"
-                  onPress={stopTimer}
-                  style={styles.buttonRun}
-                  IconCenter={MaterialIcons}
-                  IconCenterName="pause" />
+                  <Button
+                    title="Pausar"
+                    variant="primary"
+                    onPress={stopTimer}
+                    style={styles.buttonRun}
+                    IconCenter={MaterialIcons}
+                    IconCenterName="pause" />
 
-              </View>
-            }
-          </View>
-
-          <BlurView intensity={4} style={[styles.blurView, { backgroundColor: '#12263A' }]}>
-
-            <View style={styles.buttonMenu}>
-
-              <View style={styles.notification}>
-                <MaterialIcons name="notifications" size={24} color="#FFA500" />
-                <Text style={styles.text}> Notificação </Text>
-              </View>
-
-              <View style={styles.run}>
-                <MaterialIcons name="directions-run" size={24} color="#FFA500" />
-                <Text style={styles.text}> Correr </Text>
-              </View>
-
-              <View style={styles.timerButton}>
-                <MaterialIcons name="timer" size={24} color="#FFA500" />
-                <Text style={styles.text}> Timer </Text>
-              </View>
-
-              <View style={styles.historical}>
-                <Octicons name="history" size={24} color="#FFA500" />
-                <Text style={styles.text}> Histórico </Text>
-
-              </View>
-
+                </View>
+              }
             </View>
 
-          </BlurView>
+            <BlurView intensity={4} style={[styles.blurView, { backgroundColor: '#12263A' }]}>
+
+              <View style={styles.buttonMenu}>
+
+                <View style={styles.notification}>
+                  <MaterialIcons name="notifications" size={24} color="#FFA500" />
+                  <Text style={styles.text}> Notificação </Text>
+                </View>
+
+                <View style={styles.run}>
+                  <MaterialIcons name="directions-run" size={24} color="#FFA500" />
+                  <Text style={styles.text}> Correr </Text>
+                </View>
+
+                <View style={styles.timerButton}>
+                  <MaterialIcons name="timer" size={24} color="#FFA500" />
+                  <Text style={styles.text}> Timer </Text>
+                </View>
+
+                <View style={styles.historical}>
+                  <Octicons name="history" size={24} color="#FFA500" />
+                  <Text style={styles.text}> Histórico </Text>
+
+                </View>
+
+              </View>
+
+            </BlurView>
+          </View>
         </View>
       </View>
 
