@@ -52,7 +52,6 @@ export default function ResetPassword() {
       });
 
       const responseText = await response.text()
-      console.log("token recebido: ", token)
 
       let data
 
@@ -106,8 +105,6 @@ export default function ResetPassword() {
       setLoading(false);
     }
   }
-
-  console.log("token recebido: ", token)
 
   return (
     <>

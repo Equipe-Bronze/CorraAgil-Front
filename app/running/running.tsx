@@ -1,4 +1,4 @@
-import { Image, StatusBar, Text, View, Alert, Linking, Platform } from "react-native"
+import { Image, StatusBar, Text, View, Alert, Linking, Platform, Dimensions } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -23,6 +23,8 @@ export default function Running() {
   const [calories, setCalories] = useState(0);
   const { startNow } = useLocalSearchParams();
   const [locationGranted, setLocationGranted] = useState(false);
+  const { width, height } = Dimensions.get('window');
+
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const mapRef = useRef<MapView>(null);
@@ -70,10 +72,14 @@ export default function Running() {
         (response) => {
           if (!paused && previousLocation) {
             const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, response.coords);
-            const updatedDistance = distance + newDistance;
 
-            setDistance(updatedDistance);
-            updateCalories(updatedDistance);
+            setDistance(prevDistance => {
+              const updatedDistance = prevDistance + newDistance;
+              updateCalories(updatedDistance);
+              return updatedDistance;
+            });
+
+            // setDistance(updatedDistance);
           }
 
           setPreviousLocation(response);
@@ -85,13 +91,14 @@ export default function Running() {
             zoom: 15
           });
         }
+        
       );
     })();
 
     return () => {
       subscription?.remove();
     };
-  }, []);
+  }, [locationGranted, paused, previousLocation]);
 
   useEffect(() => {
     if (startNow === 'true') {
@@ -100,17 +107,27 @@ export default function Running() {
   }, [startNow]);
 
   // Atualiza o cálculo das calorias gastas com base no tempo
-  const updateCalories = (incrementalDistance: number) => {
-    const speedKmH = (incrementalDistance * 3600) / 1; // pois location atualiza a cada 1 segundo
-    const MET = speedKmH < 8 ? 7.0 : 9.8; // ajusta MET dependendo da velocidade
-    const userWeight = 70; // pode ser passado como prop ou vindo de contexto/asyncStorage
-    const caloriesPerSecond = (MET * userWeight * 3.5) / 200 / 60;
+  // const updateCalories = (incrementalDistance: number) => {
+  //   const speedKmH = (incrementalDistance * 3600) / 1; // pois location atualiza a cada 1 segundo
+  //   const MET = speedKmH < 8 ? 7.0 : 9.8; // ajusta MET dependendo da velocidade
+  //   const userWeight = 70; // pode ser passado como prop ou vindo de contexto/asyncStorage
+  //   const caloriesPerSecond = (MET * userWeight * 3.5) / 200 / 60;
 
-    setCalories(prev => parseFloat((prev + caloriesPerSecond).toFixed(2)));
+  //   setCalories(prev => parseFloat((prev + caloriesPerSecond).toFixed(2)));
+  // };
+
+  // Calculo de calorias atualizado
+  const updateCalories = (incrementalDistance: number) => {
+    const userWeight = 70;
+    const MET = 8; // valor médio
+    const kCalPerKm = MET * userWeight * 1.036;
+    const newCalories = incrementalDistance * kCalPerKm;
+
+    setCalories(prev => parseFloat((prev + newCalories).toFixed(2)));
   };
 
   const getPace = () => {
-    if (distance === 0) return "00:00";
+    if (distance < 0.01) return "00:00";
     const totalMinutes = (hours * 60) + minutes + (seconds / 60);
     const pace = totalMinutes / distance;
     const paceMin = Math.floor(pace);
@@ -482,7 +499,7 @@ export default function Running() {
       }
 
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     } finally {
       // Alert.alert("Sucesso", "Corrida salva com sucesso!");
       setLoading(false);
@@ -512,7 +529,7 @@ export default function Running() {
           </View>
 
           <View style={styles.calories}>
-            <Text style={styles.caloriesQuant}>{calories}</Text>
+            <Text style={styles.caloriesQuant}>{calories.toFixed(2)}</Text>
             <Text style={{ color: "#FFA500" }}>Calorias</Text>
           </View>
 

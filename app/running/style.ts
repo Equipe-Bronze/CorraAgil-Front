@@ -1,10 +1,13 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+
+const { width, height } = Dimensions.get('window');
+const fontSizeBase = width < 360 ? 40 : 60;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#12263A",
-        // justifyContent: "center",
         alignItems: "center",
 
     },
@@ -25,7 +28,7 @@ const styles = StyleSheet.create({
     timer: {
         color: "#FFA500",
         fontWeight: 700,
-        fontSize: 72
+        fontSize: fontSizeBase
     },
     duration: {
         color: "#FFA500",
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingHorizontal: 10,
         marginTop: 20,
-        fontSize: 17
+        fontSize: fontSizeBase
     },
     blurView: {
         width: 334,

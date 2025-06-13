@@ -41,20 +41,20 @@ const styles = StyleSheet.create({
     },
     boxBottom: {
         alignItems: "center",
-        marginTop: 25,
+        marginTop: "5%",
     },
     privacyText: {
         color: "#FFF",
         fontSize: 12,
         fontWeight: "bold",
-        marginBottom: 8,
+        marginBottom: "2%",
         marginLeft:15
     },
     privacyPolicy: {
         color: "#FFF",
         fontSize: 13,
         fontWeight: "bold",
-        marginBottom: 8,
+        marginBottom: "8%",
     },
 });
 

@@ -3,7 +3,7 @@
     "owner": "wesley_marques",
     "name": "CorraAgil",
     "slug": "corraagil",
-    "version": "1.0.6",
+    "version": "1.1.0",
     "orientation": "portrait",
     "androidStatusBar": {
       "backgroundColor": "#12263A",
@@ -37,8 +37,13 @@
         "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE"
       ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBXrJiBCFu4QGVe9_4jn5mF6wwzjtQKXac"
+        }
+      },
       "package": "com.corraagil.corraagil",
-      "versionCode": 2,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icon.png",
         "backgroundColor": "#12263A"
