@@ -116,7 +116,7 @@ export default function Running() {
 
   // Calculo de calorias atualizado
   const updateCalories = (incrementalDistance: number) => {
-    if(distance < 0.01) return "0.00"
+    if(distance < 0.05) return "0.00"
     const userWeight = 70;
     const MET = 8; // valor médio
     const kCalPerKm = MET * userWeight * distance;
