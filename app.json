@@ -3,7 +3,7 @@
     "owner": "wesley_marques",
     "name": "CorraAgil",
     "slug": "corraagil",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "androidStatusBar": {
       "backgroundColor": "#12263A",

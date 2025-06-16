@@ -1,6 +1,6 @@
 import { Image, StatusBar, Text, View, Alert, Linking, Platform, Dimensions } from "react-native"
 import { useEffect, useRef, useState } from "react";
-import MapView from 'react-native-maps';
+import MapView, { Camera, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Toast from 'react-native-toast-message';
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -86,9 +86,7 @@ export default function Running() {
           setLocation(response);
           mapRef.current?.animateCamera({
             center: response.coords,
-            pitch: 0,
-            heading: 0,
-            zoom: 15
+            zoom: 20,
           });
         }
         
@@ -118,9 +116,10 @@ export default function Running() {
 
   // Calculo de calorias atualizado
   const updateCalories = (incrementalDistance: number) => {
+    if(distance < 0.01) return "0.00"
     const userWeight = 70;
     const MET = 8; // valor médio
-    const kCalPerKm = MET * userWeight * 1.036;
+    const kCalPerKm = MET * userWeight * distance;
     const newCalories = incrementalDistance * kCalPerKm;
 
     setCalories(prev => parseFloat((prev + newCalories).toFixed(2)));
@@ -128,8 +127,9 @@ export default function Running() {
 
   const getPace = () => {
     if (distance < 0.01) return "00:00";
-    const totalMinutes = (hours * 60) + minutes + (seconds / 60);
-    const pace = totalMinutes / distance;
+    // const totalMinutes = (hours * 60) + minutes + (seconds / 60);
+    const paceMedio = 1.3;
+    const pace = distance / paceMedio;
     const paceMin = Math.floor(pace);
     const paceSec = Math.round((pace - paceMin) * 60);
     return `${paceMin.toString().padStart(2, '0')}:${paceSec.toString().padStart(2, '0')}`;
@@ -172,9 +172,7 @@ export default function Running() {
     if (location) {
       mapRef.current?.animateCamera({
         center: location.coords,
-        pitch: 0,
-        heading: 0,
-        zoom: 15
+        zoom: 20
       });
     }
   }, [location]);
@@ -550,12 +548,13 @@ export default function Running() {
             <MapView
               ref={mapRef}
               style={styles.backgroundMap}
+              provider={PROVIDER_GOOGLE}
               initialRegion={
                 location
                   ? {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: 0.005,
+                    latitude: location.coords.latitude + 0.005,
+                    longitude: location.coords.longitude + 0.005,
+                    latitudeDelta: 0.05,
                     longitudeDelta: 0.005,
                   }
                   :

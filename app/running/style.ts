@@ -80,14 +80,14 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     backgroundMap: {
-        width: 669,
+        width: width,
         height: 554,
         position: "relative"
     },
     transparentView: {
         position: "absolute",
         marginTop: 385,
-        marginLeft: 170
+        marginLeft: 35
     },
     boxButton: {
         flexDirection: "row",
