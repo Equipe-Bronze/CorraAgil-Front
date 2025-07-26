@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet , Dimensions} from "react-native"
+
+const { width, height } = Dimensions.get('window');
+const fontSizeBase = width < 360 ? 40 : 60;
 
 const styles = StyleSheet.create({
     container: {
@@ -17,22 +20,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         position: "absolute",
         height: 535,
-        width: 430,
+        width: width,
     },
     textTop: {
         color: "#FFF",
         fontSize: 30,
-        marginTop: 12,
+        // marginTop: 12,
     },
     boxMid: {
         alignItems: "center",
-        marginTop: 15,
     },
     textMid: {
         color: "#FFF",
         fontSize: 32,
         fontWeight: "bold",
-        paddingLeft: 15,
+        marginLeft: "1%",
     },
     textRace: {
         color: "#FFF",
@@ -41,14 +43,14 @@ const styles = StyleSheet.create({
     },
     boxBottom: {
         alignItems: "center",
-        marginTop: "5%",
+        marginTop: "2%",
     },
     privacyText: {
         color: "#FFF",
         fontSize: 12,
         fontWeight: "bold",
         marginBottom: "2%",
-        marginLeft:15
+        marginLeft:"8%"
     },
     privacyPolicy: {
         color: "#FFF",

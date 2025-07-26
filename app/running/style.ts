@@ -86,8 +86,10 @@ const styles = StyleSheet.create({
     },
     transparentView: {
         position: "absolute",
-        marginTop: 385,
-        marginLeft: 35
+        //marginTop: 385,
+        marginTop: "90%",
+        // marginLeft: 35
+        marginLeft: "10%"
     },
     boxButton: {
         flexDirection: "row",
