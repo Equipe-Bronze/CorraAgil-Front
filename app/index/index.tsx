@@ -36,6 +36,7 @@ export default function Index() {
         </View>
 
         <View style={styles.boxBottom}>
+          
           <Text style={styles.privacyText}>
             Para proteger sua privacidade e garantir a segurança de suas
             informações pessoais, ao continuar, você concorda com a:
