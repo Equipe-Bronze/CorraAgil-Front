@@ -549,16 +549,22 @@ export default function Running() {
               ref={mapRef}
               style={styles.backgroundMap}
               provider={PROVIDER_GOOGLE}
-              initialRegion={
+              initialRegion={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }} /*
+
                 location
                   ? {
-                    latitude: location.coords.latitude + 0.005,
-                    longitude: location.coords.longitude + 0.005,
+                    latitude: location.coords.latitude + 0.05,
+                    longitude: location.coords.longitude + 0.05,
                     latitudeDelta: 0.05,
-                    longitudeDelta: 0.005,
+                    longitudeDelta: 0.05,
                   }
                   :
-                  defaultRegion}
+                  defaultRegion}*/
               showsUserLocation={true}
               customMapStyle={darkMapStyle}
             />

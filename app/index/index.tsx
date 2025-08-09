@@ -23,7 +23,6 @@ export default function Index() {
 
           <View style={styles.transparentView}>
             <Image source={require("../../src/assets/corraAgil.png")} />
-
             <Text style={styles.textTop}>Pronto para acelerar?</Text>
           </View>
         </View>
