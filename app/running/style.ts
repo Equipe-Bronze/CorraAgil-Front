@@ -42,11 +42,11 @@ const styles = StyleSheet.create({
 
     },
     status: {
-        width: 350,
+        width: width - 20,
         height: 67,
         flexDirection: "row",
         justifyContent: "space-between",
-
+        alignItems: "center",
     },
     distance: {
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
     backgroundMap: {
         width: width,
-        height: 554,
+        height: "100%",
         position: "relative"
     },
     transparentView: {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     buttonMenu: {
-        width: 335,
+        width: "100%",
         height: 66,
         marginTop: 10,
         flexDirection: "row",

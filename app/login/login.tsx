@@ -110,11 +110,14 @@ export default function Login() {
       <StatusBar backgroundColor="#12263A" barStyle="light-content" />
       
       <View style={styles.top}>
-        <Image source={require("../../src/assets/topLogin.png")} />
+        <Image
+          source={require("../../src/assets/topLogin.png")} 
+          style={{maxHeight: "70%"}}
+          />
 
         <Image
           source={require("../../src/assets/corraAgil.png")}
-          style={{ marginTop: 23 }}
+          style={{ marginTop: "7%" }}
         />
       </View>
 

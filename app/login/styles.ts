@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width, height } = Dimensions.get('window');
+const fontSizeBase = width < 360 ? 40 : 60;
 
 const styles = StyleSheet.create({
   container: {
@@ -8,8 +11,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   top: {
+    width: width,
     alignItems: "center",
-    marginBottom: 40,
+    // marginBottom: "5%",
   },
   title: {
     color: "#FFF",
@@ -17,7 +21,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   containerInput: {
-    marginTop: 30,
+    marginTop: "5%",
     alignItems: "center",
   },
   toggleButton: {
@@ -30,10 +34,10 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "bold",
     fontSize: 20,
-    marginBottom: 33,
+    marginBottom: "5%",
   },
   containerButton: {
-    marginBottom: 96,
+    marginBottom: "30%",
   },
   error: {
     color: "red",
