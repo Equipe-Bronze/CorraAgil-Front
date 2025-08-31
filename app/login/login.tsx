@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { View, Text, Image, StatusBar, Alert } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 import { Input } from "../../src/components/Input";
 import { Button } from "../../src/components/Button";
 import * as Yup from "yup";
@@ -32,13 +33,13 @@ export default function Login() {
         { abortEarly: false }
       );
 
-      const endPoint = "https://corraagil.onrender.com/cadastro/login";
+      const endPoint = "https://corraagil.onrender.com/login";
 
       const response = await fetch(endPoint, {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           email: email,
@@ -46,8 +47,10 @@ export default function Login() {
         })
       });
 
-      const responseText = await response.text()
+      const responseText = await response.text();
 
+      console.log("Response Text:", responseText);
+      
       const contentType = response.headers.get("Content-Type");
 
       let data;
@@ -70,11 +73,20 @@ export default function Login() {
           Alert.alert("Erro","Email ou senha inválidos")
           throw new Error("Email ou senha inválidos");
         } else {
+          // Alert.alert("Erro","Ocorreu um erro. Tente novamente mais tarde")
           throw new Error((data.message || response.statusText || data));
         }
       }
 
+
+      if (data.token){
+        await SecureStore.setItemAsync('token', data.token);
+      } else{
+        console.log("Token não encontrado na resposta"), data;
+      }
+
       if (data.email) {
+        await SecureStore.setItemAsync('email', data.email);
         setEmail(data.email);
       }
 

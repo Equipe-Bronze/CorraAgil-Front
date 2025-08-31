@@ -60,7 +60,8 @@
           "locationAlwaysAndWhenInUsePermission": "Este app usa sua localização para registrar corridas.",
           "locationWhenInUsePermission": "Este app usa sua localização para registrar corridas."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

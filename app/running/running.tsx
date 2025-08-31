@@ -1,4 +1,5 @@
 import { Image, StatusBar, Text, View, Alert, Linking, Platform, Dimensions } from "react-native"
+import * as SecureStore from 'expo-secure-store';
 import { useEffect, useRef, useState } from "react";
 import MapView, { Camera, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -73,21 +74,29 @@ export default function Running() {
           if (!paused && previousLocation) {
             const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, response.coords);
 
-            setDistance(prevDistance => {
-              const updatedDistance = prevDistance + newDistance;
-              updateCalories(updatedDistance);
-              return updatedDistance;
+            if (newDistance > 0.0001) {
+              setDistance(prevDistance => {
+                const updatedDistance = prevDistance + newDistance;
+                updateCalories(updatedDistance);
+                
+                return updatedDistance;
             });
+          }
 
             // setDistance(updatedDistance);
           }
 
           setPreviousLocation(response);
           setLocation(response);
-          mapRef.current?.animateCamera({
+          if(mapRef.current && response?.coords){
+            mapRef.current?.animateCamera({
             center: response.coords,
-            zoom: 20,
+            pitch: 0,
+            heading: 0,
+            zoom: 15,
           });
+          }
+          
         }
         
       );
@@ -453,6 +462,7 @@ export default function Running() {
       setLoading(true);
 
       const endPoint = "https://corraagil.onrender.com/corrida";
+      const token = await SecureStore.getItemAsync('token');
 
       const response = await fetch(endPoint, {
         method: "POST",
@@ -549,23 +559,16 @@ export default function Running() {
               ref={mapRef}
               style={styles.backgroundMap}
               provider={PROVIDER_GOOGLE}
-              initialRegion={{
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: 0.05,
-                    longitudeDelta: 0.05,
-                  }} /*
-
-                location
-                  ? {
-                    latitude: location.coords.latitude + 0.05,
-                    longitude: location.coords.longitude + 0.05,
-                    latitudeDelta: 0.05,
-                    longitudeDelta: 0.05,
-                  }
-                  :
-                  defaultRegion}*/
-              showsUserLocation={true}
+              initialRegion={location
+                      ? {
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                        latitudeDelta: 0.05,
+                        longitudeDelta: 0.05,
+                        }
+                      :
+                        defaultRegion}
+              showsUserLocation
               customMapStyle={darkMapStyle}
             />
           }

@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         //marginTop: 385,
         marginTop: "90%",
         // marginLeft: 35
-        marginLeft: "10%"
+        marginLeft: "8%"
     },
     boxButton: {
         flexDirection: "row",

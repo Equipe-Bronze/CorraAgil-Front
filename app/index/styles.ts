@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     },
     boxBottom: {
         alignItems: "center",
-        marginTop: "2%",
+        marginTop: "5%",
     },
     privacyText: {
         color: "#FFF",
