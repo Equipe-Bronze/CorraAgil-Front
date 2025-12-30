@@ -9,35 +9,34 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.1.18",
-    "@react-navigation/stack": "^6.4.1",
-    "expo": "^53.0.9",
-    "expo-blur": "~14.1.4",
-    "expo-constants": "~17.1.6",
-    "expo-linking": "~7.1.5",
-    "expo-location": "~18.1.5",
-    "expo-media-library": "~17.1.6",
-    "expo-router": "~5.0.7",
-    "expo-status-bar": "~2.2.3",
-    "expo-system-ui": "~5.0.7",
+    "@react-navigation/native": "^7.1.6",
+    "expo": "~54.0.30",
+    "expo-blur": "~15.0.8",
+    "expo-constants": "~18.0.12",
+    "expo-linking": "~8.0.11",
+    "expo-location": "~19.0.8",
+    "expo-media-library": "~18.2.1",
+    "expo-router": "~6.0.21",
+    "expo-secure-store": "~15.0.8",
+    "expo-status-bar": "~3.0.9",
+    "expo-system-ui": "~6.0.9",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native-maps": "1.20.1",
-    "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "^4.10.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
     "react-native-toast-message": "^2.3.0",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "^0.20.0",
-    "yup": "^1.4.0",
-    "expo-secure-store": "~14.2.4"
+    "react-native-web": "^0.21.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@react-native-community/cli-server-api": "^18.0.0",
-    "@types/react": "~19.0.10",
+    "@types/react": "~19.1.10",
     "@types/react-native-vector-icons": "^6.4.18",
     "metro-config": "^0.82.4",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.2"
   },
   "private": true
 }
