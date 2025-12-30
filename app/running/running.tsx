@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import MapView, { Camera, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Toast from 'react-native-toast-message';
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useGlobalSearchParams, useRouter } from "expo-router";
 import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import styles from "./style"
@@ -13,6 +13,7 @@ import { Button } from "../../src/components/Button"
 
 export default function Running() {
   const router = useRouter();
+  const { token } = useGlobalSearchParams();
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [hours, setHours] = useState(0);
@@ -251,7 +252,7 @@ export default function Running() {
             const formattedTime = formatTime(totalTime);
 
             sendRace({
-              time: totalTime,
+              duration: totalTime,
               distance: distance,
               calories: calories
             });
@@ -448,11 +449,11 @@ export default function Running() {
   ]
 
   const sendRace = async ({
-    time,
+    duration,
     distance,
     calories
   }: {
-    time: number;
+    duration: number;
     distance: number;
     calories: number;
 
@@ -469,14 +470,17 @@ export default function Running() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          autorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          time,
+          duration,
           distance,
           calories,
-          // user: idUser
+          token: token
         })
       });
+
+      const userData = await response.json();
 
       const responseText = await response.text()
 
@@ -582,7 +586,7 @@ export default function Running() {
                   // onPress={() => paused ? router.push('../countDown/countDown') : setPaused(false)}
                   onPress={startTimer}
                   IconCenter={AntDesign}
-                  IconCenterName="caretright"
+                  // IconCenterName="caretright"
                 />
                 :
                 <View style={styles.boxButton}>
