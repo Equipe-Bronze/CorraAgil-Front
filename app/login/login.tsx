@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Input } from "../../src/components/Input";
 import { Button } from "../../src/components/Button";
 import * as Yup from "yup";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
 
@@ -18,6 +18,7 @@ const validationSchema = Yup.object().shape({
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ export default function Login() {
         body: JSON.stringify({
           email: email,
           senha: password,
+          token: token, 
         })
       });
 
@@ -81,6 +83,7 @@ export default function Login() {
 
       if (data.token){
         await SecureStore.setItemAsync('token', data.token);
+        console.log("Token salvo com sucesso: " + data.token);
       } else{
         console.log("Token não encontrado na resposta"), data;
       }
@@ -95,7 +98,10 @@ export default function Login() {
       }
 
       // Alert.alert("Sucesso", "Login realizado com sucesso!");
-      router.push("../running/running")
+      router.push({
+        pathname:"../running/running",
+        params: { token }
+      })
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
